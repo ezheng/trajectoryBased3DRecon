@@ -4,6 +4,7 @@ QQ = [];
 qq = [];
 Theta = [];
 for iCamera = 1 : length(P)
+    iCamera
     p = P{iCamera};
     skew = Vec2Skew([measurement(iCamera,:)';1]);
     Q = skew*p(:,1:3);

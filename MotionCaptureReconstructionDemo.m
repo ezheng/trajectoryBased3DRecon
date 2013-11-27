@@ -11,10 +11,12 @@ function MotionCaptureReconstructionDemo(filename)
 % You can set amount of occlusion, frame rate, noise level of correspondences, and the number of basis.
 % When you do not know the number of basis, you can set nBasis = -1. (Let the system decide.)
 
+filename = './motionCapture/walk_data.mat';
+
 occlusion = 0.0; % 20% occlusion
 framerate = 1; % 100% of full frame rate
-noise_level = 0.1; % noise of image measurement
-nBasis = -1; % the number of basis is determined by the cross validation.
+noise_level = 0.0; % noise of image measurement
+nBasis = 60; % the number of basis is determined by the cross validation.
 
 Data = load(filename);
 X0 = Data.X(:,1:floor(1/framerate):end);
@@ -24,6 +26,10 @@ X0 = X0-mean(X0(:));
 Y0 = Y0-mean(Y0(:));
 Z0 = Z0-mean(Z0(:));
 T0 = Data.T(:,1:floor(1/framerate):end)-1;
+
+for i = 1:size(X0,2)
+    DSG{i} = [X0(:,i), Y0(:,i), Z0(:,i)];   %ground truth
+end
 
 % Camera trajectory generation
 CameraTrajectory = 100*rand(3, length(T0));
@@ -67,15 +73,19 @@ end
 % Animate result
 figure(1), clf;
 for i = 1 : length(DS)
+    d = DSG{i};
+    DSG{i} = repmat(d(1,:), size(d,1),1);
     if i == 1 
         h = DrawMocapHuman(DS{i}, 'b-x'); hold on
+        h2 = DrawMocapHuman(DSG{i}, 'r-x'); hold on
     else
         DrawMocapHuman(DS{i}, 'b-x', h); hold on
+        DrawMocapHuman(DSG{i}, 'r-x', h2);hold on
     end
     grid on, axis off, axis vis3d, axis equal, set(gcf, 'color', 'w');
-    axis([-100 100 -100 100 -50 80])
+    axis([-400 400 -400 400 -50 80])
     drawnow
-    pause(0.1);
+     pause(0.01);
 end
 
 
