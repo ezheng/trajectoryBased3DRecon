@@ -21,7 +21,7 @@ noise_level = 0.0; % noise of image measurement
 % ----------------------------------------------------------------------
 s = RandStream('mcg16807','Seed',0);
 RandStream.setGlobalStream(s);
-addpath('F:\Enliang\library_64\cvx_mip');
+addpath('cvx');
 cvx_setup;
 
 Data = load(filename);

@@ -1,5 +1,6 @@
 function generateCmdScript()
-
+addpath('cvx');
+cvx_setup;
 
 fileName = 'cmd_killDevil';
 fid = fopen(fileName, 'w');
