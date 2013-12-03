@@ -12,11 +12,17 @@ function MotionCaptureReconstructionDemo(filename)
 % When you do not know the number of basis, you can set nBasis = -1. (Let the system decide.)
 
 filename = './motionCapture/walk_data.mat';
-
+%  filename = './motionCapture/stand_data.mat';
 occlusion = 0.0; % 20% occlusion
 framerate = 1; % 100% of full frame rate
 noise_level = 0.0; % noise of image measurement
-nBasis = 60; % the number of basis is determined by the cross validation.
+nBasis = 240; % the number of basis is determined by the cross validation.
+
+% ----------------------------------------------------------------------
+s = RandStream('mcg16807','Seed',0);
+RandStream.setDefaultStream(s);
+addpath('F:\Enliang\library_64\cvx_mip');
+cvx_setup;
 
 Data = load(filename);
 X0 = Data.X(:,1:floor(1/framerate):end);
@@ -32,8 +38,8 @@ for i = 1:size(X0,2)
 end
 
 % Camera trajectory generation
-CameraTrajectory = 100*rand(3, length(T0));
-CameraTrajectory(3,:) = CameraTrajectory(3,:) + 100;
+CameraTrajectory = 200* (rand(3, length(T0)) - 0.5);
+% CameraTrajectory(3,:) = CameraTrajectory(3,:) + 100;
 K = [1e+2 0 500; 0 1e+2 500; 0 0 1];
 
 for iCamera = 1 : size(CameraTrajectory,2)
@@ -49,6 +55,9 @@ for iCamera = 1 : size(CameraTrajectory,2)
     m = C{iCamera}.P * [X0(:,iCamera)'; Y0(:,iCamera)'; Z0(:,iCamera)'; ones(1,size(X0,1))];
     C{iCamera}.m = [m(1,:)./m(3,:); m(2,:)./m(3,:)]';
     C{iCamera}.m = C{iCamera}.m + noise_level*randn(size(C{iCamera}.m));
+    C{iCamera}.R = R;
+    C{iCamera}.C = CameraTrajectory(:,iCamera);
+    C{iCamera}.K = K;    
 end
 
 % Occlusion
@@ -70,11 +79,15 @@ for i = 1 : size(Traj{1},1)
     DS{i} = ds;
 end
 
+% evaluation
+error = evaluateError(DS, DSG);
+
+
 % Animate result
 figure(1), clf;
 for i = 1 : length(DS)
-    d = DSG{i};
-    DSG{i} = repmat(d(1,:), size(d,1),1);
+%     d = DSG{i};
+%     DSG{i} = repmat(d(1,:), size(d,1),1);
     if i == 1 
         h = DrawMocapHuman(DS{i}, 'b-x'); hold on
         h2 = DrawMocapHuman(DSG{i}, 'r-x'); hold on
