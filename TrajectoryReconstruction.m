@@ -53,16 +53,16 @@ if K ~= -1
                 measurements(end+1,:) = C{iCamera}.m(iPoint,:);                
             end
         end
-%         Beta{iPoint} = ReconstructPointTrajectory(P, time_instants, measurements, sequence_length, K);
-%         theta = IDCTmappingMatrix(sequence_length);
-%         theta = theta(:,1:K);
-%         Traj{iPoint} = [theta*Beta{iPoint}(1:end/3) theta*Beta{iPoint}(1+end/3:2*end/3) theta*Beta{iPoint}(1+2*end/3:end)];
+        Beta{iPoint} = ReconstructPointTrajectory(P, time_instants, measurements, sequence_length, K);
+        theta = IDCTmappingMatrix(sequence_length);
+        theta = theta(:,1:K);
+        Traj{iPoint} = [theta*Beta{iPoint}(1:end/3) theta*Beta{iPoint}(1+end/3:2*end/3) theta*Beta{iPoint}(1+2*end/3:end)];
         
-        camConnect = zeros( numel(time_instants) -1 , 2);
-        camConnect(:,1) = time_instants(1:end-1)+1;
-        camConnect(:,2) = time_instants(2:end)+1; 
-        Traj{iPoint} = ReconstructPointTrajectory_SumOfNorm(C, camConnect, iPoint); 
-        Traj{iPoint} = Traj{iPoint}';
+%         camConnect = zeros( numel(time_instants) -1 , 2);
+%         camConnect(:,1) = time_instants(1:end-1)+1;
+%         camConnect(:,2) = time_instants(2:end)+1; 
+%         Traj{iPoint} = ReconstructPointTrajectory_SumOfNorm(C, camConnect, iPoint); 
+%         Traj{iPoint} = Traj{iPoint}';
     end
 else
     C = SortCameraInTimeOrder(C);
