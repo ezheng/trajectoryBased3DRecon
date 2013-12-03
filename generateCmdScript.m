@@ -10,5 +10,5 @@ end
 
 fclose(fid);
 
-system(sprintf('chmod %s +x', fileName));
-system(sprintf('%s', fileName));
+system(sprintf('chmod +x %s', fileName));
+system(sprintf('./%s', fileName));
